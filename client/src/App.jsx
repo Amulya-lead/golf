@@ -35,6 +35,7 @@ import Pricing from './pages/Pricing';
 import Admin from './pages/Admin';
 import Checkout from './pages/Checkout';
 import Profile from './pages/Profile';
+import ImpactStory from './pages/ImpactStory';
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
@@ -78,6 +79,7 @@ function AppRoutes() {
         <Route path="/draw" element={<SubscribedRoute><DrawPage /></SubscribedRoute>} />
         <Route path="/charities" element={<Charities />} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/impact-story" element={<ProtectedRoute><ImpactStory /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
