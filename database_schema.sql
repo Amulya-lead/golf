@@ -136,6 +136,17 @@ CREATE TABLE IF NOT EXISTS public.winners (
 );
 
 
+-- 7. Donations Table (19 Independent Donations)
+CREATE TABLE IF NOT EXISTS public.donations (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  charity_id UUID REFERENCES public.charities(id) ON DELETE CASCADE NOT NULL,
+  amount NUMERIC NOT NULL CHECK (amount > 0),
+  payment_method TEXT DEFAULT 'card',
+  status TEXT DEFAULT 'success',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- ==========================================
 -- ROW LEVEL SECURITY (RLS) - ALL IDEMPOTENT
 -- ==========================================
@@ -146,6 +157,7 @@ ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.draws ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.winners ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.donations ENABLE ROW LEVEL SECURITY;
 
 -- Charities Policies
 DROP POLICY IF EXISTS "Charities are viewable by everyone" ON public.charities;
@@ -262,3 +274,13 @@ ALTER TABLE public.campaigns ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Anyone can view active campaigns" ON public.campaigns;
 CREATE POLICY "Anyone can view active campaigns" ON public.campaigns
   FOR SELECT USING (active = true);
+
+-- 14. Donations Policies (19 Independent Donations)
+DROP POLICY IF EXISTS "Users can view own donations" ON public.donations;
+CREATE POLICY "Users can view own donations" ON public.donations FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can insert own donations" ON public.donations;
+CREATE POLICY "Users can insert own donations" ON public.donations FOR INSERT WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Admins can view all donations" ON public.donations;
+CREATE POLICY "Admins can view all donations" ON public.donations FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
