@@ -25,13 +25,16 @@ export default function Navbar() {
 
             <div className="navbar-links">
                 <NavLink to="/charities">Charities</NavLink>
-                {user ? (
+                {user && user.role === 'admin' ? (
+                    <>
+                        <NavLink to="/admin">Admin Control</NavLink>
+                    </>
+                ) : user && user.role === 'user' ? (
                     <>
                         <NavLink to="/dashboard">Dashboard</NavLink>
                         <NavLink to="/scores/new">Submit Score</NavLink>
                         <NavLink to="/leaderboard">Leaderboard</NavLink>
                         <NavLink to="/draw">Monthly Draw</NavLink>
-                        {user.role === 'admin' && <NavLink to="/admin">Admin</NavLink>}
                     </>
                 ) : (
                     <>
