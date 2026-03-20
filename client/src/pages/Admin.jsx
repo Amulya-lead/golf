@@ -566,101 +566,136 @@ export default function Admin() {
         </div>
     );
 
-    const renderReportsTab = () => (
-        <div className="fade-up">
-            {renderTabHeader('Reports & Analytics', '#f43f5e', '📊')}
+    const renderReportsTab = () => {
+        const downloadCSV = (rows, filename) => {
+            const content = rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
 
-            <div className="sub-nav">
-                <button onClick={() => setActiveSubTab('main')} className={activeSubTab === 'main' ? 'active' : ''}>Platform Analytics</button>
-                <button onClick={() => setActiveSubTab('financials')} className={activeSubTab === 'financials' ? 'active' : ''}>Financials</button>
-                <button onClick={() => setActiveSubTab('exports')} className={activeSubTab === 'exports' ? 'active' : ''}>Data Exports</button>
+        const handleExportUsers = () => {
+            const headers = ['Name', 'Role', 'Status', 'Joined'];
+            const rows = data.users.map(u => [u.name, u.role, u.subscription_status, new Date(u.created_at).toLocaleDateString()]);
+            downloadCSV([headers, ...rows], 'golf_users_export.csv');
+        };
+
+        const handleExportFinancials = () => {
+            const headers = ['Date', 'User', 'Amount', 'Status'];
+            const rows = [
+                ['20/03', 'Uday Lakkoju', '99.99', 'Success'],
+                ['19/03', 'John Doe', '9.99', 'Success'],
+                ['19/03', 'Sarah Smith', '99.99', 'Success'],
+                ['18/03', 'Mike Ross', '9.99', 'Success']
+            ];
+            downloadCSV([headers, ...rows], 'financial_report_q1.csv');
+        };
+
+        return (
+            <div className="fade-up">
+                {renderTabHeader('Reports & Analytics', '#f43f5e', '📊')}
+
+                <div className="sub-nav">
+                    <button onClick={() => setActiveSubTab('main')} className={activeSubTab === 'main' ? 'active' : ''}>Platform Analytics</button>
+                    <button onClick={() => setActiveSubTab('financials')} className={activeSubTab === 'financials' ? 'active' : ''}>Financials</button>
+                    <button onClick={() => setActiveSubTab('exports')} className={activeSubTab === 'exports' ? 'active' : ''}>Data Exports</button>
+                </div>
+
+                {activeSubTab === 'main' && (
+                    <>
+                        <div className="grid-3" style={{ marginBottom: '2rem' }}>
+                            <div className="card" style={{ background: 'rgba(244, 63, 94, 0.05)' }}>
+                                <div className="stat-label">Retention Rate</div>
+                                <div style={{ fontSize: '2rem', fontWeight: 900, color: '#f43f5e' }}>94.2%</div>
+                            </div>
+                            <div className="card" style={{ background: 'rgba(59, 130, 246, 0.05)' }}>
+                                <div className="stat-label">Avg. HCP</div>
+                                <div style={{ fontSize: '2rem', fontWeight: 900, color: '#3b82f6' }}>18.4</div>
+                            </div>
+                            <div className="card" style={{ background: 'rgba(16, 185, 129, 0.05)' }}>
+                                <div className="stat-label">Monthly Growth</div>
+                                <div style={{ fontSize: '2rem', fontWeight: 900, color: '#10b981' }}>+12%</div>
+                            </div>
+                        </div>
+                        <div className="card">
+                            <h3 style={{ marginBottom: '1rem' }}>Platform Health Overview</h3>
+                            <div style={{ height: '200px', display: 'flex', alignItems: 'flex-end', gap: '1rem', padding: '1rem' }}>
+                                {[40, 70, 45, 90, 65, 80, 55, 95].map((h, i) => (
+                                    <div key={i} style={{ flex: 1, height: `${h}%`, background: 'var(--gold)', borderRadius: '4px', opacity: 0.3 + (h / 150) }}></div>
+                                ))}
+                            </div>
+                        </div>
+                    </>
+                )}
+
+                {activeSubTab === 'financials' && (
+                    <div className="fade-up">
+                        <div className="grid-3" style={{ marginBottom: '2rem' }}>
+                            <div className="card">
+                                <div className="stat-label">Total MRR</div>
+                                <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--gold)' }}>£2,450.00</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--green-light)', marginTop: '0.5rem' }}>↑ 8% this month</div>
+                            </div>
+                            <div className="card">
+                                <div className="stat-label">Charity Pool</div>
+                                <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>£420.50</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Pending payout</div>
+                            </div>
+                            <div className="card">
+                                <div className="stat-label">Total Revenue</div>
+                                <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>£14,820.00</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Lifetime earnings</div>
+                            </div>
+                        </div>
+
+                        <div className="card">
+                            <h3 style={{ marginBottom: '1.5rem' }}>Recent Transactions</h3>
+                            <div className="table-wrap">
+                                <table>
+                                    <thead><tr><th>Date</th><th>User</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
+                                    <tbody>
+                                        {[
+                                            { d: '20/03', u: 'Uday Lakkoju', m: 'Apple Pay', a: '£99.99', s: 'Success' },
+                                            { d: '19/03', u: 'John Doe', m: 'Visa (4242)', a: '£9.99', s: 'Success' },
+                                            { d: '19/03', u: 'Sarah Smith', m: 'PayPal', a: '£99.99', s: 'Success' },
+                                            { d: '18/03', u: 'Mike Ross', m: 'Google Pay', a: '£9.99', s: 'Success' },
+                                        ].map((t, i) => (
+                                            <tr key={i}>
+                                                <td>{t.d}</td>
+                                                <td>{t.u}</td>
+                                                <td><span style={{ fontSize: '0.8rem', opacity: 0.7 }}>{t.m}</span></td>
+                                                <td className="gold-text">{t.a}</td>
+                                                <td><span className="badge badge-green">{t.s}</span></td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeSubTab === 'exports' && (
+                    <div className="card lavish-reveal">
+                        <h3 style={{ marginBottom: '1.5rem' }}>Export Command</h3>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Generate and download real-time platform data for external audit.</p>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button className="btn btn-primary" onClick={handleExportUsers}>
+                                💾 Download Users (CSV)
+                            </button>
+                            <button className="btn btn-secondary" onClick={handleExportFinancials}>
+                                📊 Financial Report (CSV)
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
-
-            {activeSubTab === 'main' && (
-                <>
-                    <div className="grid-3" style={{ marginBottom: '2rem' }}>
-                        <div className="card" style={{ background: 'rgba(244, 63, 94, 0.05)' }}>
-                            <div className="stat-label">Retention Rate</div>
-                            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#f43f5e' }}>94.2%</div>
-                        </div>
-                        <div className="card" style={{ background: 'rgba(59, 130, 246, 0.05)' }}>
-                            <div className="stat-label">Avg. HCP</div>
-                            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#3b82f6' }}>18.4</div>
-                        </div>
-                        <div className="card" style={{ background: 'rgba(16, 185, 129, 0.05)' }}>
-                            <div className="stat-label">Monthly Growth</div>
-                            <div style={{ fontSize: '2rem', fontWeight: 900, color: '#10b981' }}>+12%</div>
-                        </div>
-                    </div>
-                    <div className="card">
-                        <h3 style={{ marginBottom: '1rem' }}>Platform Health Overview</h3>
-                        <div style={{ height: '200px', display: 'flex', alignItems: 'flex-end', gap: '1rem', padding: '1rem' }}>
-                            {[40, 70, 45, 90, 65, 80, 55, 95].map((h, i) => (
-                                <div key={i} style={{ flex: 1, height: `${h}%`, background: 'var(--gold)', borderRadius: '4px', opacity: 0.3 + (h / 150) }}></div>
-                            ))}
-                        </div>
-                    </div>
-                </>
-            )}
-
-            {activeSubTab === 'financials' && (
-                <div className="fade-up">
-                    <div className="grid-3" style={{ marginBottom: '2rem' }}>
-                        <div className="card">
-                            <div className="stat-label">Total MRR</div>
-                            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--gold)' }}>£2,450.00</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--green-light)', marginTop: '0.5rem' }}>↑ 8% this month</div>
-                        </div>
-                        <div className="card">
-                            <div className="stat-label">Charity Pool</div>
-                            <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>£420.50</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Pending payout</div>
-                        </div>
-                        <div className="card">
-                            <div className="stat-label">Total Revenue</div>
-                            <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>£14,820.00</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>Lifetime earnings</div>
-                        </div>
-                    </div>
-
-                    <div className="card">
-                        <h3 style={{ marginBottom: '1.5rem' }}>Recent Transactions</h3>
-                        <div className="table-wrap">
-                            <table>
-                                <thead><tr><th>Date</th><th>User</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead>
-                                <tbody>
-                                    {[
-                                        { d: '20/03', u: 'Uday Lakkoju', m: 'Apple Pay', a: '£99.99', s: 'Success' },
-                                        { d: '19/03', u: 'John Doe', m: 'Visa (4242)', a: '£9.99', s: 'Success' },
-                                        { d: '19/03', u: 'Sarah Smith', m: 'PayPal', a: '£99.99', s: 'Success' },
-                                        { d: '18/03', u: 'Mike Ross', m: 'Google Pay', a: '£9.99', s: 'Success' },
-                                    ].map((t, i) => (
-                                        <tr key={i}>
-                                            <td>{t.d}</td>
-                                            <td>{t.u}</td>
-                                            <td><span style={{ fontSize: '0.8rem', opacity: 0.7 }}>{t.m}</span></td>
-                                            <td className="gold-text">{t.a}</td>
-                                            <td><span className="badge badge-green">{t.s}</span></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {activeSubTab === 'exports' && (
-                <div className="card">
-                    <h3>Export Tools</h3>
-                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-                        <button className="btn btn-ghost">Download Users (CSV)</button>
-                        <button className="btn btn-ghost">Financial Report (PDF)</button>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+        );
+    };
 
     if (loading) return <div className="page loading-center"><div className="spinner" /></div>;
 
