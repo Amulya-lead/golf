@@ -472,9 +472,17 @@ export default function Admin() {
                 <div className="card">
                     <h3>Charity Media Assets</h3>
                     <div className="grid-3" style={{ marginTop: '1.5rem' }}>
-                        <div style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Banner_01.jpg</div>
-                        <div style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Logo_SVG.png</div>
-                        <div style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed var(--border-subtle)' }}>+ Upload</div>
+                        <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                            <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&q=80&w=600" alt="Banner" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0.4rem', background: 'rgba(0,0,0,0.6)', fontSize: '0.7rem' }}>charity_banner.jpg</div>
+                        </div>
+                        <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                            <img src="https://images.unsplash.com/photo-1582213726892-20ac73d82717?auto=format&fit=crop&q=80&w=600" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0.4rem', background: 'rgba(0,0,0,0.6)', fontSize: '0.7rem' }}>logo_foundation.png</div>
+                        </div>
+                        <div style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed var(--border-subtle)', cursor: 'pointer' }}>
+                            <span style={{ fontSize: '1.5rem' }}>+</span>
+                        </div>
                     </div>
                 </div>
             )}
