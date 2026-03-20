@@ -6,6 +6,18 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [theme, setThemeState] = useState(localStorage.getItem('charity_theme') || 'default');
+
+    const setTheme = (newTheme) => {
+        setThemeState(newTheme);
+        localStorage.setItem('charity_theme', newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+    };
+
+    useEffect(() => {
+        // Initialize theme on load
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [theme]);
 
     const fetchProfile = async (authId) => {
         try {
@@ -187,7 +199,7 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, updateSubscription, cancelSubscription }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, updateSubscription, cancelSubscription, theme, setTheme }}>
             {children}
         </AuthContext.Provider>
     );

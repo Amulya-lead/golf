@@ -2,8 +2,14 @@ import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
-    const { user, logout } = useAuth();
+    const { user, logout, theme, setTheme } = useAuth();
     const navigate = useNavigate();
+
+    const cycleTheme = () => {
+        const themes = ['default', 'emerald', 'platinum'];
+        const nextTheme = themes[(themes.indexOf(theme || 'default') + 1) % themes.length];
+        setTheme(nextTheme);
+    };
 
     const handleLogout = async () => {
         try {
@@ -44,6 +50,9 @@ export default function Navbar() {
             </div>
 
             <div className="navbar-right">
+                <button onClick={cycleTheme} className="btn btn-ghost btn-sm" style={{ padding: '0.4rem', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '0.5rem', fontSize: '1.2rem' }} title="Toggle Theme">
+                    {theme === 'emerald' ? '🌲' : theme === 'platinum' ? '☀️' : '🌙'}
+                </button>
                 {user ? (
                     <>
                         <Link to="/profile" className="avatar-bubble" title={user.name}>{user.avatarInitials || user.name?.[0]?.toUpperCase()}</Link>

@@ -99,6 +99,38 @@ export default function Dashboard() {
                     </div>
                 </div>
 
+                {/* 22 Ultimate Polish - Platform Pulse Ticker */}
+                <div style={{ marginBottom: '1.5rem', background: 'rgba(201, 168, 76, 0.05)', border: '1px solid rgba(201, 168, 76, 0.2)', borderRadius: '12px', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+                    <div style={{ fontWeight: 800, color: 'var(--gold)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', paddingRight: '1rem', borderRight: '1px solid rgba(255,255,255,0.1)', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ width: '8px', height: '8px', background: '#4cd137', borderRadius: '50%', boxShadow: '0 0 8px #4cd137', animation: 'pulse 2s infinite' }}></span>
+                        Live Pulse
+                    </div>
+                    <div style={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', position: 'relative' }}>
+                        <div style={{ display: 'inline-block', paddingLeft: '100%', animation: 'marquee 35s linear infinite' }}>
+                            <span style={{ marginRight: '3rem' }}>🎉 <strong style={{ color: '#fff' }}>Sarah M.</strong> just locked in a 14-day streak!</span>
+                            <span style={{ marginRight: '3rem' }}>⛳ <strong style={{ color: '#fff' }}>David R.</strong> posted a brilliant 41 pts at Pebble Beach.</span>
+                            <span style={{ marginRight: '3rem' }}>💚 Someone just contributed <strong className="gold-text">£100</strong> to Ocean Rescue!</span>
+                            <span style={{ marginRight: '3rem' }}>🏌️‍♂️ The Prize Pool just rolled over £5,000 for this month's draw.</span>
+                            <span style={{ marginRight: '3rem' }}>🏆 <strong style={{ color: '#fff' }}>Emma W.</strong> climbed into the Top 10 Golfers globally.</span>
+                            <span style={{ marginRight: '3rem' }}>✨ 12 new members joined the charity movement today.</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 22 Ultimate Polish - Impact Story Banner */}
+                <Link to="/impact-story" style={{ display: 'block', textDecoration: 'none', marginBottom: '2.5rem' }}>
+                    <div style={{ background: 'linear-gradient(135deg, rgba(201, 168, 76, 0.1), rgba(201, 168, 76, 0.3))', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--gold)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ position: 'absolute', right: '-20px', top: '-20px', fontSize: '10rem', opacity: 0.1, transform: 'rotate(-10deg)', pointerEvents: 'none' }}>✨</div>
+                        <div>
+                            <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#fff', marginBottom: '0.2rem' }}>Play Your 2026 Impact Story</h3>
+                            <p style={{ color: 'var(--gold-light)', margin: 0 }}>Tap to see your personalized year in review.</p>
+                        </div>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gold)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                            ▶
+                        </div>
+                    </div>
+                </Link>
+
                 <div className="grid-4" style={{ marginBottom: '2.5rem' }}>
                     {[
                         { label: 'Draw Entries', value: user?.drawEntries ?? 0, icon: '✨', gold: true },
