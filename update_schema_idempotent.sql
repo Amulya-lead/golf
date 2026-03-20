@@ -14,6 +14,13 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='last_activity_at') THEN
         ALTER TABLE public.profiles ADD COLUMN last_activity_at TIMESTAMPTZ;
     END IF;
+    -- 23 Commercial Expansion
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='kyc_status') THEN
+        ALTER TABLE public.profiles ADD COLUMN kyc_status TEXT DEFAULT 'unverified' CHECK (kyc_status IN ('unverified', 'pending', 'verified'));
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='referred_by') THEN
+        ALTER TABLE public.profiles ADD COLUMN referred_by UUID REFERENCES public.profiles(id);
+    END IF;
 END $$;
 
 -- 2. Create Winners Table (09 Winner Verification)

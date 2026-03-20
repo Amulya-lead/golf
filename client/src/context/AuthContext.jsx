@@ -131,8 +131,9 @@ export function AuthProvider({ children }) {
             drawEntries: profile?.drawEntries || 0,
             selectedCharity: profile?.selectedCharity || null,
             avatarInitials: profile?.avatarInitials || '⛳',
-            currentStreak: profile?.currentStreak || 0,
-            lastActivityAt: profile?.lastActivityAt || null
+            lastActivityAt: profile?.lastActivityAt || null,
+            kycStatus: profile?.kycStatus || 'unverified',
+            referredBy: profile?.referredBy || null
         };
 
         console.log("Login success. User role:", userData.role);
@@ -141,10 +142,10 @@ export function AuthProvider({ children }) {
         return { data, profile: userData };
     };
 
-    const register = async (name, identifier, password, plan) => {
+    const register = async (name, identifier, password, plan, referredBy = null) => {
         const { data, error } = await supabase.auth.signUp({
             email: formatIdentifier(identifier), password,
-            options: { data: { name, plan, is_username_account: !identifier.includes('@') } }
+            options: { data: { name, plan, referred_by: referredBy, is_username_account: !identifier.includes('@') } }
         });
         if (error) throw error;
         setLoading(false);

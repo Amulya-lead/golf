@@ -237,6 +237,18 @@ export default function Admin() {
                     <div className="mini-stat"><span>Prize Pool</span><strong>£{stats?.latestDraw?.prize_amount || 0}</strong></div>
                 </div>
             </div>
+
+            <div className="card fade-up" onClick={() => setActiveTab('kyc')} style={{ cursor: 'pointer', animationDelay: '0.6s', borderTop: '4px solid #eab308', background: 'linear-gradient(180deg, rgba(234, 179, 8, 0.05) 0%, rgba(0,0,0,0) 100%)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(234, 179, 8, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🔍</div>
+                    <h3 style={{ fontSize: '1.4rem', fontWeight: 800 }}>KYC Pipeline</h3>
+                </div>
+                <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <li className="hover-gold">● Identity Verification</li>
+                    <li className="hover-gold">● Fraud Prevention</li>
+                    <li className="hover-gold">● Compliance Center</li>
+                </ul>
+            </div>
         </div>
     );
 
@@ -697,6 +709,40 @@ export default function Admin() {
         );
     };
 
+    const renderKycTab = () => (
+        <div className="fade-up">
+            {renderTabHeader('KYC Verification Pipeline', '#eab308', '🔍')}
+            <div className="card">
+                <h3 style={{ marginBottom: '1.5rem' }}>Pending Identity Verifications</h3>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Ensure platform compliance and fraud prevention by verifying user identities before payouts stream.</p>
+                <div className="table-wrap">
+                    <table>
+                        <thead><tr><th>User</th><th>Email</th><th>ID Document</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                            {data.users.slice(0, 3).map((u, i) => (
+                                <tr key={u.id || i}>
+                                    <td style={{ fontWeight: 600 }}>{u.name}</td>
+                                    <td style={{ color: 'var(--text-muted)' }}>{u.email}</td>
+                                    <td><span style={{ color: '#3b82f6', textDecoration: 'underline', cursor: 'pointer' }}>View Document.pdf</span></td>
+                                    <td><span className="badge badge-error" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>PENDING REVIEW</span></td>
+                                    <td>
+                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                            <button className="btn btn-primary btn-sm" style={{ background: '#10b981', color: '#fff', border: 'none', padding: '0.4rem 0.8rem' }} onClick={() => alert(`Simulated: Identity Approved for ${u.name}`)}>Approve</button>
+                                            <button className="btn btn-secondary btn-sm" style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', padding: '0.4rem 0.8rem' }} onClick={() => alert(`Simulated: Identity Rejected for ${u.name}`)}>Reject</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            {data.users.length === 0 && (
+                                <tr><td colSpan="5" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No pending verifications.</td></tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    );
+
     if (loading) return <div className="page loading-center"><div className="spinner" /></div>;
 
     return (
@@ -730,6 +776,7 @@ export default function Admin() {
                     {activeTab === 'charities' && renderCharitiesTab()}
                     {activeTab === 'winners' && renderWinnersTab()}
                     {activeTab === 'reports' && renderReportsTab()}
+                    {activeTab === 'kyc' && renderKycTab()}
                 </div>
 
                 {activeTab === 'overview' && (

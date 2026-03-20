@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const plans = [
@@ -15,6 +15,8 @@ export default function Register() {
     const [loading, setLoading] = useState(false);
     const { register, user } = useAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const referredBy = searchParams.get('ref');  // Capture ?ref=UUID from invite link
 
     useEffect(() => {
         if (user) navigate('/dashboard');
@@ -31,7 +33,7 @@ export default function Register() {
         }
         setError(''); setLoading(true);
         try {
-            await register(form.name, form.identifier, form.password, form.plan);
+            await register(form.name, form.identifier, form.password, form.plan, referredBy);
             // We assume "Confirm Email" is turned OFF in Supabase if using Username mode.
             navigate('/dashboard');
         } catch (err) {
@@ -47,6 +49,16 @@ export default function Register() {
                     <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>Join <span className="gold-text">GolfGives</span></h1>
                     <p style={{ color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Step {step} of 2 — {step === 1 ? 'Your Details' : 'Choose Your Plan'}</p>
                 </div>
+
+                {referredBy && (
+                    <div style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid var(--gold)', borderRadius: '10px', padding: '0.8rem 1.2rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <span style={{ fontSize: '1.5rem' }}>🎁</span>
+                        <div>
+                            <div style={{ fontWeight: 700, color: 'var(--gold)', fontSize: '0.9rem' }}>You were invited by a friend!</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>You'll both get a bonus draw entry when you sign up.</div>
+                        </div>
+                    </div>
+                )}
 
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem' }}>
                     {[1, 2].map(s => (

@@ -220,10 +220,46 @@ export default function ScoreEntry() {
                                         onChange={e => setNewRound({ ...newRound, stablefordScore: e.target.value })}
                                         style={{ fontSize: '2rem', fontWeight: 900, textAlign: 'center', color: 'var(--gold)' }} required />
                                 </div>
-                                <div className="form-group">
+                                <div className="form-group" style={{ position: 'relative' }}>
                                     <label className="form-label">Golf Course</label>
-                                    <input className="form-input" placeholder="Enter course name to fetch local conditions..." value={newRound.course}
-                                        onChange={e => setNewRound({ ...newRound, course: e.target.value })} required />
+                                    <input
+                                        className="form-input"
+                                        placeholder="Type course name (e.g. Augusta, St Andrews)..."
+                                        value={newRound.course}
+                                        onChange={e => {
+                                            setNewRound({ ...newRound, course: e.target.value });
+                                            if (!document.getElementById('courseDropdown').style.display) {
+                                                document.getElementById('courseDropdown').style.display = 'block';
+                                            }
+                                        }}
+                                        onFocus={() => document.getElementById('courseDropdown').style.display = 'block'}
+                                        onBlur={() => setTimeout(() => document.getElementById('courseDropdown').style.display = 'none', 200)}
+                                        required
+                                    />
+
+                                    <div id="courseDropdown" style={{ display: 'none', position: 'absolute', top: 'calc(100% - 10px)', left: 0, right: 0, background: 'var(--bg-secondary)', border: '1px solid var(--border)', zIndex: 10, borderRadius: '8px', maxHeight: '150px', overflowY: 'auto', boxShadow: 'var(--shadow-card)' }}>
+                                        {[
+                                            "Augusta National", "St Andrews (Old Course)", "Pebble Beach", "Pine Valley", "Cypress Point",
+                                            "Royal County Down", "Shinnecock Hills", "Oakmont", "Muirfield", "Royal Melbourne",
+                                            "Trump Turnberry", "Carnoustie", "Royal Portrush", "Tara Iti", "Sunningdale",
+                                            "Royal Birkdale", "Ballybunion", "Riviera", "Whistling Straits", "Bandon Dunes",
+                                            "Bethpage Black", "Kiawah Island (Ocean)", "TPC Sawgrass", "Pinehurst No. 2"
+                                        ].filter(c => c.toLowerCase().includes(newRound.course.toLowerCase())).map(c => (
+                                            <div
+                                                key={c}
+                                                style={{ padding: '0.8rem 1rem', cursor: 'pointer', borderBottom: '1px solid var(--border-subtle)', transition: 'background 0.2s' }}
+                                                onMouseOver={(e) => e.target.style.background = 'var(--bg-card)'}
+                                                onMouseOut={(e) => e.target.style.background = 'transparent'}
+                                                onClick={() => {
+                                                    setNewRound({ ...newRound, course: c });
+                                                    document.getElementById('courseDropdown').style.display = 'none';
+                                                }}
+                                            >
+                                                {c}
+                                            </div>
+                                        ))}
+                                    </div>
+
                                     {weather && (
                                         <div style={{ marginTop: '0.75rem', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '1rem', animation: 'revealUp 0.3s ease' }}>
                                             <div style={{ fontSize: '1.8rem' }}>{weather.icon}</div>

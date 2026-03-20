@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../context/AuthContext';
 
 export default function Dashboard() {
-    const { user, refreshUser, cancelSubscription } = useAuth();
+    const { user, refreshUser } = useAuth();
+    const navigate = useNavigate();
     const [scores, setScores] = useState([]);
     const [subscription, setSubscription] = useState(null);
     const [winnings, setWinnings] = useState({ total: 0, pending: 0, list: [] });
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showInbox, setShowInbox] = useState(false);
 
     useEffect(() => {
         if (user && user.role === 'admin') {
@@ -25,7 +27,7 @@ export default function Dashboard() {
                     supabase.from('scores').select('*').eq('user_id', user.id).order('date', { ascending: false }).limit(5),
                     supabase.from('subscriptions').select('*').eq('user_id', user.id).eq('status', 'active').maybeSingle(),
                     supabase.from('winners').select('*').eq('user_id', user.id),
-                    supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3)
+                    supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10)
                 ]);
 
                 if (scoresRes.data) setScores(scoresRes.data);
@@ -93,7 +95,13 @@ export default function Dashboard() {
                         <h1 style={{ fontSize: '2.2rem', fontWeight: 900 }}>Welcome back, <span className="gold-text">{user?.name?.split(' ')[0]}</span></h1>
                         <p style={{ color: 'var(--text-secondary)', marginTop: '0.3rem' }}>Your personal impact & performance dashboard</p>
                     </div>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <button onClick={() => setShowInbox(true)} className="btn btn-ghost btn-sm" style={{ position: 'relative', fontSize: '1.2rem', padding: '0.5rem' }}>
+                            📬
+                            {notifications.filter(n => !n.read).length > 0 && (
+                                <span style={{ position: 'absolute', top: 0, right: 0, background: '#e74c3c', width: '10px', height: '10px', borderRadius: '50%', border: '2px solid var(--bg-primary)' }}></span>
+                            )}
+                        </button>
                         <Link to="/results" className="btn btn-secondary btn-sm">Past Results</Link>
                         <Link to="/scores/new" className="btn btn-primary btn-sm btn-shimmer">+ Submit Score</Link>
                     </div>
@@ -313,6 +321,46 @@ export default function Dashboard() {
                     )}
                 </div>
             </div>
+
+            {/* Simulated Email Inbox Modal */}
+            {showInbox && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', justifyContent: 'flex-end' }}>
+                    <div className="card" style={{ width: '100%', maxWidth: '450px', height: '100%', borderRadius: '0', background: 'var(--bg-secondary)', overflowY: 'auto', padding: '2rem', animation: 'slideInRight 0.3s forwards' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                            <h2 style={{ fontSize: '1.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                📬 <span className="gold-text">Inbox</span>
+                            </h2>
+                            <button onClick={() => setShowInbox(false)} className="btn btn-ghost" style={{ fontSize: '1.5rem', padding: '0.2rem 0.5rem' }}>×</button>
+                        </div>
+
+                        {notifications.length === 0 ? (
+                            <p style={{ color: 'var(--text-muted)' }}>Your inbox is empty.</p>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                {notifications.map(n => (
+                                    <div key={n.id} style={{
+                                        padding: '1.2rem', background: n.read ? 'rgba(255,255,255,0.02)' : 'rgba(201, 168, 76, 0.05)',
+                                        borderLeft: n.read ? '3px solid transparent' : '3px solid var(--gold)',
+                                        borderRadius: '8px'
+                                    }}>
+                                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                                            {new Date(n.created_at).toLocaleString()}
+                                        </div>
+                                        <h4 style={{ fontWeight: 800, marginBottom: '0.5rem' }}>{n.title}</h4>
+                                        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{n.message}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '2rem' }}>
+                            * This is a simulated transactional email inbox.
+                        </p>
+                    </div>
+                </div>
+            )}
+            <style>{`
+                @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+            `}</style>
         </div>
     );
 }

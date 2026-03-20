@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../supabaseClient';
 
 export default function Checkout() {
     const { user, updateSubscription } = useAuth();
@@ -24,6 +25,15 @@ export default function Checkout() {
         setTimeout(async () => {
             try {
                 await updateSubscription(plan);
+
+                // 23 Commercial Expansion - Simulated Email Receipt
+                await supabase.from('notifications').insert({
+                    user_id: user.id,
+                    title: '🧾 Payment Receipt: GolfGives',
+                    message: `Thank you for your ${price} subscription payment. 10% has been successfully routed to your active charity.`,
+                    type: 'system'
+                });
+
                 setStep(3);
                 const destination = location.state?.from?.pathname || '/dashboard';
                 setTimeout(() => navigate(destination), 2000);

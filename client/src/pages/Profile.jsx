@@ -5,6 +5,15 @@ import { Link } from 'react-router-dom';
 export default function Profile() {
     const { user } = useAuth();
     const [calc, setCalc] = useState({ rx: 0, ry: 0, tx: 50, ty: 50, active: false });
+    const [copySuccess, setCopySuccess] = useState('');
+    const [kycStatus, setKycStatus] = useState('unverified'); // 'unverified', 'pending', 'verified'
+
+    const handleCopyLink = () => {
+        const link = `https://charity.golf/register?ref=${user?.id}`;
+        navigator.clipboard.writeText(link);
+        setCopySuccess('Copied! ✓');
+        setTimeout(() => setCopySuccess(''), 2000);
+    };
 
     if (!user) return <div className="page loading-center"><div className="spinner" /></div>;
 
@@ -134,6 +143,46 @@ export default function Profile() {
                             </div>
                         </div>
                     </section>
+                </div>
+
+                <div className="card glass" style={{ marginTop: '2rem', textAlign: 'center', background: 'linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.02))', border: '1px solid var(--gold)' }}>
+                    <h3 style={{ marginBottom: '1rem', color: 'var(--gold)' }}>🎁 Refer a Friend, Get a Golden Ticket</h3>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+                        Invite your golf buddies to the platform. When they sign up, you both receive an extra entry into this month's charity prize draw!
+                    </p>
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', alignItems: 'stretch', flexWrap: 'wrap' }}>
+                        <input
+                            type="text"
+                            readOnly
+                            value={`https://charity.golf/register?ref=${user.id}`}
+                            style={{ padding: '0.8rem 1rem', flex: 1, maxWidth: '350px', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-muted)', borderRadius: '8px' }}
+                        />
+                        <button className="btn btn-primary" onClick={handleCopyLink} style={{ background: 'var(--gold)', color: '#000', padding: '0 1.5rem' }}>
+                            {copySuccess || 'Copy Invite Link'}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="card glass" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                    <h3 style={{ marginBottom: '1rem' }}>🔐 KYC Identity Verification</h3>
+                    {kycStatus === 'unverified' ? (
+                        <>
+                            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem', maxWidth: '500px' }}>
+                                To ensure compliance with competition laws and prevent fraud in our high-value prize drawings, we require identity verification.
+                            </p>
+                            <button className="btn btn-primary" onClick={() => setKycStatus('pending')} style={{ background: '#3b82f6', color: '#fff', padding: '0.8rem 2rem' }}>
+                                📸 Simulate ID Upload
+                            </button>
+                        </>
+                    ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 2rem', background: 'rgba(234, 179, 8, 0.1)', borderRadius: '12px', border: '1px solid rgba(234, 179, 8, 0.3)' }}>
+                            <span style={{ fontSize: '2rem' }}>⏳</span>
+                            <div style={{ textAlign: 'left' }}>
+                                <div style={{ fontWeight: 800, color: '#eab308', fontSize: '1.1rem' }}>Verification Pending</div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>An admin is currently reviewing your document.</div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="card glass" style={{ marginTop: '2rem', textAlign: 'center' }}>
