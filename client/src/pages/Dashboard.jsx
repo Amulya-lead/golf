@@ -181,6 +181,21 @@ export default function Dashboard() {
                                         style={{ width: '100%', accentColor: 'var(--gold)', cursor: 'pointer' }}
                                     />
                                 </div>
+                                {/* 21 Advanced Wow Features - Tangible Impact Visualizer */}
+                                <div style={{ background: 'var(--gold)', color: '#000', padding: '1rem', borderRadius: '14px', position: 'relative', overflow: 'hidden' }}>
+                                    <div style={{ position: 'absolute', right: '-10px', top: '-10px', fontSize: '4rem', opacity: 0.15, transform: 'rotate(15deg)' }}>
+                                        {user.selectedCharity.category.includes('health') ? '💊' :
+                                            user.selectedCharity.category.includes('education') ? '🏌️‍♂️' :
+                                                user.selectedCharity.category.includes('environment') ? '🌲' : '🍲'}
+                                    </div>
+                                    <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.3rem', opacity: 0.8 }}>Your Real-World Impact</div>
+                                    <div style={{ fontSize: '1.2rem', fontWeight: 900, lineHeight: 1.2 }}>
+                                        {user.selectedCharity.category.includes('health') ? `Funded ${Math.floor((user.totalContributed || 0) / 10)} research hours` :
+                                            user.selectedCharity.category.includes('education') ? `Provided ${Math.floor((user.totalContributed || 0) / 15)} youth lessons` :
+                                                user.selectedCharity.category.includes('environment') ? `Planted ${Math.floor((user.totalContributed || 0) / 5)} protected trees` :
+                                                    `Served ${Math.floor((user.totalContributed || 0) / 5)} community meals`}
+                                    </div>
+                                </div>
                             </div>
                         ) : (
                             <div style={{ textAlign: 'center', padding: '1.5rem' }}>

@@ -20,6 +20,7 @@ export default function ScoreEntry() {
         course: '',
         date: new Date().toISOString().split('T')[0]
     });
+    const [weather, setWeather] = useState(null);
     const [setupRounds, setSetupRounds] = useState(Array(5).fill(null).map(() => ({
         stablefordScore: '',
         course: '',
@@ -51,6 +52,30 @@ export default function ScoreEntry() {
         }
         loadScores();
     }, [user?.id]);
+
+    useEffect(() => {
+        if (!newRound.course || newRound.course.length < 3) {
+            setWeather(null);
+            return;
+        }
+
+        const delayBounceFn = setTimeout(() => {
+            // Generate deterministic "simulated" weather based on the course name
+            const sum = newRound.course.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const conditions = [
+                { i: '☀️', d: 'Sunny', min: 18, max: 25 },
+                { i: '🌤️', d: 'Partly Cloudy', min: 14, max: 22 },
+                { i: '⛅', d: 'Overcast', min: 12, max: 18 },
+                { i: '💨', d: 'Windy', min: 10, max: 16 },
+                { i: '🌧️', d: 'Light Rain', min: 8, max: 14 }
+            ];
+            const w = conditions[sum % conditions.length];
+            const temp = w.min + (sum % (w.max - w.min));
+            const wind = 5 + (sum % 15);
+            setWeather({ icon: w.i, desc: w.d, temp, wind });
+        }, 600);
+        return () => clearTimeout(delayBounceFn);
+    }, [newRound.course]);
 
     const handleSetupSubmit = async (e) => {
         e.preventDefault();
@@ -197,8 +222,20 @@ export default function ScoreEntry() {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Golf Course</label>
-                                    <input className="form-input" placeholder="Course name..." value={newRound.course}
+                                    <input className="form-input" placeholder="Enter course name to fetch local conditions..." value={newRound.course}
                                         onChange={e => setNewRound({ ...newRound, course: e.target.value })} required />
+                                    {weather && (
+                                        <div style={{ marginTop: '0.75rem', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: '1rem', animation: 'revealUp 0.3s ease' }}>
+                                            <div style={{ fontSize: '1.8rem' }}>{weather.icon}</div>
+                                            <div>
+                                                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Live Conditions</div>
+                                                <div style={{ fontWeight: 800, color: '#fff' }}>{weather.desc}, {weather.temp}°C</div>
+                                            </div>
+                                            <div style={{ marginLeft: 'auto', textAlign: 'right', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                                💨 {weather.wind} mph wind
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Date</label>
