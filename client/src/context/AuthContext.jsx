@@ -27,7 +27,10 @@ export function AuthProvider({ children }) {
                 nextBillingDate: subData?.next_billing_date || null,
                 selectedCharity: charity || null,
                 drawEntries: data.draw_entries, totalContributed: data.total_contributed,
-                avatarInitials: data.avatar_initials, email: ''
+                avatarInitials: data.avatar_initials, email: '',
+                currentStreak: data.current_streak || 0,
+                lastActivityAt: data.last_activity_at || null
+
             };
         } catch (e) {
             console.error("fetchProfile error:", e);
@@ -52,7 +55,9 @@ export function AuthProvider({ children }) {
                         subscriptionPlan: profile?.subscriptionPlan || 'monthly',
                         drawEntries: profile?.drawEntries || 0,
                         selectedCharity: profile?.selectedCharity || null,
-                        avatarInitials: profile?.avatarInitials || '⛳'
+                        avatarInitials: profile?.avatarInitials || '⛳',
+                        currentStreak: profile?.currentStreak || 0,
+                        lastActivityAt: profile?.lastActivityAt || null
                     });
                 }
             } else {
@@ -113,7 +118,9 @@ export function AuthProvider({ children }) {
             subscriptionPlan: profile?.subscriptionPlan || 'monthly',
             drawEntries: profile?.drawEntries || 0,
             selectedCharity: profile?.selectedCharity || null,
-            avatarInitials: profile?.avatarInitials || '⛳'
+            avatarInitials: profile?.avatarInitials || '⛳',
+            currentStreak: profile?.currentStreak || 0,
+            lastActivityAt: profile?.lastActivityAt || null
         };
 
         console.log("Login success. User role:", userData.role);

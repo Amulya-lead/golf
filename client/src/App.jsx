@@ -22,6 +22,7 @@ class ErrorBoundary extends React.Component {
 }
 
 import Navbar from './components/Navbar';
+import SupportChat from './components/SupportChat';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -80,6 +81,7 @@ function AppRoutes() {
         <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+      {user && <SupportChat />}
     </>
   );
 }

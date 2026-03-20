@@ -1,11 +1,18 @@
 -- IDEMPOTENT UPDATE SCRIPT (Sections 08 & 09)
 -- Run this in your Supabase SQL Editor
 
--- 1. Update Profiles with Charity Percentage
+-- 1. Update Profiles with Charity Percentage & Engagement Features
 DO $$ 
 BEGIN 
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='charity_percentage') THEN
         ALTER TABLE public.profiles ADD COLUMN charity_percentage NUMERIC DEFAULT 10;
+    END IF;
+    -- 20 Engagement Features
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='current_streak') THEN
+        ALTER TABLE public.profiles ADD COLUMN current_streak INTEGER DEFAULT 0;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='last_activity_at') THEN
+        ALTER TABLE public.profiles ADD COLUMN last_activity_at TIMESTAMPTZ;
     END IF;
 END $$;
 

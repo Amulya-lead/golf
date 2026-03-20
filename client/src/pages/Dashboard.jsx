@@ -37,7 +37,30 @@ export default function Dashboard() {
                 }
                 if (notifRes.data) setNotifications(notifRes.data);
 
+                // Streak Logic
+                const now = new Date();
+                const lastActivity = user.lastActivityAt ? new Date(user.lastActivityAt) : null;
+                let newStreak = user.currentStreak || 0;
+
+                if (!lastActivity) {
+                    newStreak = 1;
+                } else {
+                    const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    const lastDate = new Date(lastActivity.getFullYear(), lastActivity.getMonth(), lastActivity.getDate());
+                    const daysSince = Math.round((todayDate - lastDate) / (24 * 60 * 60 * 1000));
+
+                    if (daysSince === 1) {
+                        newStreak += 1;
+                    } else if (daysSince > 1) {
+                        newStreak = 1; // broken
+                    }
+                }
+
+                if (!lastActivity || now.getDate() !== lastActivity.getDate() || now.getMonth() !== lastActivity.getMonth() || now.getFullYear() !== lastActivity.getFullYear()) {
+                    await supabase.from('profiles').update({ current_streak: newStreak, last_activity_at: now.toISOString() }).eq('id', user.id);
+                }
                 await refreshUser();
+
             } catch (err) {
                 console.error("Dashboard failed to load stats:", err);
             } finally {
@@ -48,6 +71,17 @@ export default function Dashboard() {
     }, [user?.id]);
 
     const bestScore = scores.length ? Math.max(...scores.map(s => s.total_stableford)) : null;
+
+    const quotes = [
+        "The best way to find yourself is to lose yourself in the service of others. — Mahatma Gandhi",
+        "No one has ever become poor by giving. — Anne Frank",
+        "It's not how much we give but how much love we put into giving. — Mother Teresa",
+        "We make a living by what we get, but we make a life by what we give. — Winston Churchill",
+        "Golf is the closest game to the game we call life. You get bad breaks from good shots; you get good breaks from bad shots... but you have to play the ball where it lies. — Bobby Jones"
+    ];
+    // Pick a stable quote for the day based on date
+    const todayQuote = quotes[new Date().getDate() % quotes.length];
+
 
     if (loading) return <div className="page loading-center"><div className="spinner" /></div>;
 
@@ -179,6 +213,25 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* 20 Engagement Features - Motivation & Streak */}
+                <div className="card glass-gold" style={{ marginTop: '3rem', padding: '2rem', display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1, minWidth: '300px' }}>
+                        <h3 style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '1.5rem' }}>📅</span> Daily Motivation
+                        </h3>
+                        <p style={{ fontStyle: 'italic', color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '1.05rem', marginTop: '1rem', paddingLeft: '1rem', borderLeft: '3px solid var(--gold)' }}>
+                            {todayQuote}
+                        </p>
+                    </div>
+                    <div style={{ textAlign: 'center', padding: '1.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '16px', minWidth: '150px' }}>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>Current Streak</div>
+                        <div style={{ fontSize: '3rem', fontWeight: 900, lineHeight: 1, textShadow: '0 0 20px rgba(201, 168, 76, 0.4)' }} className="gold-text">
+                            {user?.currentStreak || 0} <span style={{ fontSize: '1.5rem' }}>🔥</span>
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Days Active</div>
                     </div>
                 </div>
 
