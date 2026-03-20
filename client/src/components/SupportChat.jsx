@@ -27,8 +27,8 @@ export default function SupportChat() {
         setInput('');
 
         // Simulate AI thinking and response
-        setTimeout(() => {
-            let reply = "I'm sorry, I didn't quite catch that. Could you try rephrasing?";
+        setTimeout(async () => {
+            let reply = "I'm sorry, I couldn't find an answer for that.";
             const lowerMsg = userMsg.toLowerCase();
 
             if (lowerMsg.includes('donate') || lowerMsg.includes('charity')) {
@@ -41,10 +41,29 @@ export default function SupportChat() {
                 reply = `Hello ${user ? user.name.split(' ')[0] : 'golfer'}! Ready to make an impact today?`;
             } else if (lowerMsg.includes('score') || lowerMsg.includes('handicap')) {
                 reply = "You can log your latest rounds from the Dashboard. We'll automatically calculate your Stableford points based on your current handicap!";
+            } else {
+                // Fallback to Wikipedia for general knowledge
+                try {
+                    const searchQuery = lowerMsg.replace(/^(what is|who is|tell me about|what are|explain|how does) /i, '').trim();
+                    const res = await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(searchQuery)}&utf8=&format=json&origin=*`);
+                    const data = await res.json();
+
+                    if (data.query?.search?.length > 0) {
+                        const topResult = data.query.search[0];
+                        // Strip HTML tags from snippet
+                        let snippet = topResult.snippet.replace(/<\/?[^>]+(>|$)/g, "");
+                        snippet = snippet.replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, '&');
+                        reply = `${topResult.title}: ${snippet}... (Source: Wikipedia)`;
+                    } else {
+                        reply = "I am specifically tuned for the Golf Charity Platform and I couldn't find any external information on that. Try asking me about donations, streaks, or prizes!";
+                    }
+                } catch (err) {
+                    reply = "I'm having trouble connecting to my external knowledge base right now. Could you ask me about the charity platform instead?";
+                }
             }
 
             setMessages(prev => [...prev, { text: reply, isBot: true }]);
-        }, 800);
+        }, 500);
     };
 
     return (
