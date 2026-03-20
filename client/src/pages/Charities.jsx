@@ -44,6 +44,7 @@ export default function Charities() {
         } finally { setSaving(null); }
     };
 
+    const categoryColors = { health: '#e74c3c', education: '#3498db', environment: '#27ae60', sport: '#c9a84c', community: '#9b59b6' };
     const [showDonationModal, setShowDonationModal] = useState(false);
     const [selectedCharityForDonation, setSelectedCharityForDonation] = useState(null);
     const [donationAmount, setDonationAmount] = useState('10');
