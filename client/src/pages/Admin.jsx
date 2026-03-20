@@ -477,8 +477,8 @@ export default function Admin() {
                             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0.4rem', background: 'rgba(0,0,0,0.6)', fontSize: '0.7rem' }}>charity_banner.jpg</div>
                         </div>
                         <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
-                            <img src="https://images.unsplash.com/photo-1582213726892-20ac73d82717?auto=format&fit=crop&q=80&w=600" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0.4rem', background: 'rgba(0,0,0,0.6)', fontSize: '0.7rem' }}>logo_foundation.png</div>
+                            <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=600" alt="Foundation" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0.4rem', background: 'rgba(0,0,0,0.6)', fontSize: '0.7rem' }}>foundation_identity.jpg</div>
                         </div>
                         <div style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed var(--border-subtle)', cursor: 'pointer' }}>
                             <span style={{ fontSize: '1.5rem' }}>+</span>
