@@ -33,6 +33,7 @@ import Charities from './pages/Charities';
 import Pricing from './pages/Pricing';
 import Admin from './pages/Admin';
 import Checkout from './pages/Checkout';
+import Profile from './pages/Profile';
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
@@ -75,6 +76,7 @@ function AppRoutes() {
         <Route path="/leaderboard" element={<SubscribedRoute><Leaderboard /></SubscribedRoute>} />
         <Route path="/draw" element={<SubscribedRoute><DrawPage /></SubscribedRoute>} />
         <Route path="/charities" element={<Charities />} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

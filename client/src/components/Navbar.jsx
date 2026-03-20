@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
@@ -43,7 +43,7 @@ export default function Navbar() {
             <div className="navbar-right">
                 {user ? (
                     <>
-                        <div className="avatar-bubble" title={user.name}>{user.avatarInitials || user.name?.[0]?.toUpperCase()}</div>
+                        <Link to="/profile" className="avatar-bubble" title={user.name}>{user.avatarInitials || user.name?.[0]?.toUpperCase()}</Link>
                         <button className="btn btn-ghost btn-sm" onClick={handleLogout}>Logout</button>
                     </>
                 ) : (
